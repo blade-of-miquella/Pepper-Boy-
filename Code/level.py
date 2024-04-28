@@ -1,23 +1,29 @@
 from settings import *
 from sprites import Sprite
 from player import Player
+from groups import AllSprites
 class Level:
     def __init__(self, tmx_map):
         self.display_surface = pygame.display.get_surface()
-        self.background = pygame.image.load("../Graphics/Drafts/background1.png")
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
         for x, y, surf in tmx_map.get_layer_by_name('Terrain').tiles():
-            Sprite((x*TILE_SIZE,y*TILE_SIZE), surf, (self.all_sprites, self.collision_sprites))
+            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, (self.all_sprites, self.collision_sprites))
+
+        for x, y, surf in tmx_map.get_layer_by_name('Trees').tiles():
+            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+
+        for x, y, surf in tmx_map.get_layer_by_name('Grass').tiles():
+            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
 
         for obj in tmx_map.get_layer_by_name('Objects'):
             if obj.name == 'player':
-                Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
+                self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
 
     def run(self, dt):
-        self.display_surface.fill('white')
+        self.display_surface.fill('#2188d5')
         self.all_sprites.update(dt)
-        self.all_sprites.draw(self.display_surface)
+        self.all_sprites.draw(self.player.hitbox_rect.center)
