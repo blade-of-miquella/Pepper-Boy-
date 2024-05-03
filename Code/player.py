@@ -1,3 +1,5 @@
+import pygame.key
+
 from settings import *
 from timer import Timer
 class Player(pygame.sprite.Sprite):
@@ -8,10 +10,10 @@ class Player(pygame.sprite.Sprite):
         self.hitbox_rect = self.rect.inflate(-30, 0)
         self.old_rect = self.hitbox_rect.copy()
 
-        self.speed = 50
-        self.gravity = 30
+        self.speed = 85
+        self.gravity = 65
         self.jump = False
-        self.jump_height = 120
+        self.jump_height = 180
         self.direction = vector()
 
         self.collision_sprites = collision_sprites
@@ -47,6 +49,13 @@ class Player(pygame.sprite.Sprite):
         if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall slide block'].active:
             self.direction.y = 0
             self.hitbox_rect.y += self.gravity / 10 * dt
+            if pygame.key.get_pressed()[pygame.K_s]:
+                self.hitbox_rect.y += self.gravity * 4 * dt
+            if self.on_surface['right']:
+                self.image = pygame.image.load('../Graphics/player/left_crawl_idle/1.png').convert_alpha()
+            else:
+                self.image = pygame.image.load('../Graphics/player/right_crawl_idle/1.png').convert_alpha()
+
         else:
             self.direction.y += self.gravity / 2 * dt
             self.hitbox_rect.y += self.direction.y * dt

@@ -4,19 +4,28 @@ from settings import *
 from pytmx.util_pygame import load_pygame
 from os.path import join
 
+from support import *
+
 class Game:
     def __init__(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((WIDTH, HEIGHT), pygame.HWSURFACE | pygame.FULLSCREEN)
         pygame.display.set_caption("Pepper Boy!")
-        self.icon = pygame.image.load('../Graphics/Drafts/icon.png')
         self.tmx_maps = {0: load_pygame(join('..', 'Data', 'levels', 'map.tmx'))}
-        pygame.display.set_icon(self.icon)
         self.clock = pygame.time.Clock()
-        self.current_stage = Level(self.tmx_maps[0])
+        self.import_assets()
+        self.current_stage = Level(self.tmx_maps[0], self.level_frames)
+
+    def import_assets(self):
+        self.level_frames = {
+            'a': import_folder('..', 'Graphics', 'level', 'buttons', 'a'),
+            'd': import_folder('..', 'Graphics', 'level', 'buttons', 'd'),
+            's': import_folder('..', 'Graphics', 'level', 'buttons', 's'),
+            'space': import_folder('..', 'Graphics', 'level', 'buttons', 'space')
+        }
 
     def run(self):
-        dt = self.clock.tick(30)/1000
+        dt = self.clock.tick(30) / 1000
         game = True
         while game:
             for event in pygame.event.get():
